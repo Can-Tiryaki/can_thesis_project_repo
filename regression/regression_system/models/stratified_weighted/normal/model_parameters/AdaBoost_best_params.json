@@ -1,0 +1,5 @@
+{
+    "estimator": "DecisionTreeRegressor",
+    "learning_rate": 0.1,
+    "n_estimators": 150
+}

@@ -1,0 +1,348 @@
+import os
+import json
+import joblib
+import inspect
+import numpy as np
+import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import StratifiedShuffleSplit, GridSearchCV, KFold
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
+# Model tanımları
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.neural_network import MLPRegressor
+from xgboost import XGBRegressor
+
+# Veriyi yükleme fonksiyonu
+from prepare_data import get_data
+
+def main():
+    # Çalışma klasörlerini hazırla
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    params_dir = os.path.join(base_dir, "model_parameters")
+    results_dir = os.path.join(base_dir, "results")
+    models_dir = os.path.join(base_dir, "saved_models")
+    
+    os.makedirs(params_dir, exist_ok=True)
+    os.makedirs(results_dir, exist_ok=True)
+    os.makedirs(models_dir, exist_ok=True)
+
+    print("[*] 100% Temiz normal veri seti yükleniyor (Ağırlıklı Aşaması)...")
+    X, y = get_data()
+    print(f"-> Girdi Boyutu: {X.shape}, Hedef Boyutu: {y.shape}")
+
+    # 1. Tekil Tabakalı Bölme (Stratified Train-Test Split)
+    # HbA1c kategorilerini geçici olarak oluşturup tabakalı bölüyoruz (%80 Train, %20 Test)
+    y_binned = np.where(y < 5.7, 0, np.where(y < 6.5, 1, 2))
+    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+    train_idx, test_idx = next(sss.split(X, y_binned))
+    
+    X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+    y_train, y_test = y[train_idx], y[test_idx]
+    print(f"-> Bölme tamamlandı. Train boyutu: {X_train.shape[0]}, Test boyutu: {X_test.shape[0]}")
+
+    # 2. Örnek Ağırlıklarını Hesapla (Sample Weights)
+    # Diyabet: 5.0, Prediyabet: 2.0, Normal: 1.0
+    sample_weights_train = np.where(y_train < 5.7, 1.0, np.where(y_train < 6.5, 2.0, 5.0))
+    print(f"-> Ağırlıklar hesaplandı. Toplam ağırlık: {np.sum(sample_weights_train):.1f}")
+    print(f"   Sınıf Bazlı Ağırlık Oranları -> Normal: 1.0 | Prediyabet: 2.0 | Diyabet: 5.0")
+
+    # 3. Modellere ait Arama Izgaralarını (Grids) tanımlayalım
+    models_config = {
+        'Random_Forest': {
+            'estimator': RandomForestRegressor(random_state=42),
+            'grid': {
+                'n_estimators': [100, 200],
+                'max_depth': [3, 4, 5, 6],
+                'min_samples_split': [5, 10, 15],
+                'min_samples_leaf': [5, 10, 15],
+                'max_features': ['sqrt', 0.6]
+            }
+        },
+        'Gradient_Boosting': {
+            'estimator': GradientBoostingRegressor(random_state=42),
+            'grid': {
+                'n_estimators': [100, 150],
+                'learning_rate': [0.01, 0.05, 0.1],
+                'max_depth': [2, 3, 4],
+                'min_samples_leaf': [5, 10, 15],
+                'subsample': [0.7, 0.8, 0.9]
+            }
+        },
+        'XGBoost': {
+            'estimator': XGBRegressor(random_state=42),
+            'grid': {
+                'n_estimators': [100, 150],
+                'learning_rate': [0.01, 0.05, 0.1],
+                'max_depth': [2, 3, 4],
+                'subsample': [0.7, 0.8],
+                'colsample_bytree': [0.7, 0.8],
+                'reg_alpha': [0.1, 1.0, 5.0],
+                'reg_lambda': [1.0, 5.0, 10.0]
+            }
+        },
+        'Artificial_Neural_Network': {
+            'estimator': Pipeline([
+                ('scaler', StandardScaler()),
+                ('mlp', MLPRegressor(random_state=42, max_iter=500, solver='adam', activation='relu'))
+            ]),
+            'grid': {
+                'mlp__hidden_layer_sizes': [(32,), (64, 32), (32, 16)],
+                'mlp__alpha': [0.01, 0.1, 1.0, 5.0],
+                'mlp__learning_rate_init': [0.001, 0.005]
+            }
+        },
+        'AdaBoost': {
+            'estimator': AdaBoostRegressor(random_state=42),
+            'grid': {
+                'estimator': [
+                    DecisionTreeRegressor(max_depth=2, random_state=42),
+                    DecisionTreeRegressor(max_depth=3, random_state=42),
+                    DecisionTreeRegressor(max_depth=4, random_state=42)
+                ],
+                'n_estimators': [50, 100, 150],
+                'learning_rate': [0.01, 0.05, 0.1, 0.5]
+            }
+        },
+        'Decision_Tree': {
+            'estimator': DecisionTreeRegressor(random_state=42),
+            'grid': {
+                'max_depth': [3, 4, 5, 6],
+                'min_samples_split': [10, 20, 30],
+                'min_samples_leaf': [5, 10, 15, 20]
+            }
+        }
+    }
+
+    all_results = []
+    trained_models = {}
+
+    print("\n[*] Örnek Ağırlıklı Hiperparametre Optimizasyonu (GridSearchCV) Başlatılıyor...")
+
+    # İç çapraz doğrulama
+    inner_cv = KFold(n_splits=3, shuffle=True, random_state=42)
+
+    for name, config in models_config.items():
+        print(f"\n--> Model Eğitiliyor ve Ayarlanıyor: {name}...")
+        
+        # Ağırlık desteğini kontrol et
+        has_sample_weight = True
+        model_obj = config['estimator']
+        if isinstance(model_obj, Pipeline):
+            final_est = model_obj.steps[-1][1]
+            if 'sample_weight' not in inspect.signature(final_est.fit).parameters:
+                has_sample_weight = False
+        else:
+            if 'sample_weight' not in inspect.signature(model_obj.fit).parameters:
+                has_sample_weight = False
+
+        # GridSearchCV nesnesi
+        grid_search = GridSearchCV(
+            estimator=model_obj,
+            param_grid=config['grid'],
+            cv=inner_cv,
+            scoring='r2',
+            n_jobs=-1
+        )
+        
+        # Ağırlıklı veya ağırlıksız olarak fit et
+        if has_sample_weight:
+            if isinstance(model_obj, Pipeline):
+                step_name = model_obj.steps[-1][0]
+                fit_params = {f"{step_name}__sample_weight": sample_weights_train}
+                grid_search.fit(X_train, y_train, **fit_params)
+            else:
+                grid_search.fit(X_train, y_train, sample_weight=sample_weights_train)
+            print("   Model ağırlıklandırma desteği ile eğitildi.")
+        else:
+            grid_search.fit(X_train, y_train)
+            print("   Model ağırlıklandırma desteği barındırmadığı için varsayılan eğitildi.")
+        
+        # En iyi modeli al
+        best_model = grid_search.best_estimator_
+        best_params = grid_search.best_params_
+        trained_models[name] = best_model
+        
+        # 1. En iyi parametreleri JSON olarak kaydet
+        param_file = os.path.join(params_dir, f"{name}_best_params.json")
+        def custom_serializer(obj):
+            if hasattr(obj, '__class__'):
+                return obj.__class__.__name__
+            return str(obj)
+            
+        with open(param_file, "w", encoding="utf-8") as f:
+            json.dump(best_params, f, indent=4, ensure_ascii=False, default=custom_serializer)
+        
+        # 2. Modeli joblib ile kaydet
+        model_file = os.path.join(models_dir, f"{name}_best_model.pkl")
+        joblib.dump(best_model, model_file)
+        
+        # 3. Metrikleri hesapla (Genel değerlendirme için standart unweighted metrikler)
+        # Eğitim Kümesi
+        train_preds = best_model.predict(X_train)
+        train_r2 = r2_score(y_train, train_preds)
+        train_mse = mean_squared_error(y_train, train_preds)
+        
+        # Test Kümesi
+        test_preds = best_model.predict(X_test)
+        test_r2 = r2_score(y_test, test_preds)
+        test_mse = mean_squared_error(y_test, test_preds)
+        test_mae = mean_absolute_error(y_test, test_preds)
+        test_rmse = np.sqrt(test_mse)
+        
+        # Diyabetik gruptaki MAE hatası (Özellikle bu gruba bakıyoruz!)
+        diabetic_mask = y_test >= 6.5
+        if np.sum(diabetic_mask) > 0:
+            test_diabetic_mae = mean_absolute_error(y_test[diabetic_mask], test_preds[diabetic_mask])
+        else:
+            test_diabetic_mae = 0.0
+            
+        gap = train_r2 - test_r2
+        
+        if gap > 0.25:
+            status = "⚠️ Yüksek Overfitting"
+        elif gap > 0.12:
+            status = "🟡 Hafif Overfitting"
+        elif gap < 0.02 and test_r2 < 0.20:
+            status = "🔴 Underfitting"
+        else:
+            status = "🟢 Dengeli / Stabil Model"
+            
+        res = {
+            'Model': name,
+            'Train_R2': train_r2,
+            'Test_R2': test_r2,
+            'Overfitting_Gap_R2': gap,
+            'Train_MSE': train_mse,
+            'Test_MSE': test_mse,
+            'Test_MAE': test_mae,
+            'Test_RMSE': test_rmse,
+            'Diyabetik_MAE_Test': test_diabetic_mae,
+            'Durum': status
+        }
+        all_results.append(res)
+        print(f"   En iyi parametreler: {best_params}")
+        print(f"   Eğitim R²: {train_r2:.4f} | Test R²: {test_r2:.4f} | Diyabet Test MAE: {test_diabetic_mae:.4f}")
+
+    # DataFrame oluştur
+    df_results = pd.DataFrame(all_results)
+    
+    # Sayısal sonuçları kaydet
+    csv_path = os.path.join(results_dir, "stratified_comparison_results.csv")
+    df_results.to_csv(csv_path, index=False)
+    print(f"\n[✓] Sayısal sonuçlar CSV olarak kaydedildi: {csv_path}")
+
+    # En başarılı test modelini bul
+    best_idx = df_results['Test_R2'].idxmax()
+    best_model_name = df_results.loc[best_idx, 'Model']
+    best_fitted_model = trained_models[best_model_name]
+    print(f"\n🏆 En Başarılı Ağırlıklı Model: {best_model_name} (Test R²: {df_results.loc[best_idx, 'Test_R2']:.4f})")
+
+    # 4. Yan Yana Karşılaştırma Bar Grafiği Çiz (Train vs Test R²)
+    plt.figure(figsize=(12, 6))
+    x_indices = np.arange(len(df_results))
+    width = 0.35
+    
+    plt.bar(x_indices - width/2, df_results['Train_R2'], width, label='Eğitim (Train) R²', color='#3498db', edgecolor='black')
+    plt.bar(x_indices + width/2, df_results['Test_R2'], width, label='Test (Test) R²', color='#e74c3c', edgecolor='black')
+    
+    plt.xlabel('Modeller', fontsize=12, fontweight='bold')
+    plt.ylabel('R² Skoru', fontsize=12, fontweight='bold')
+    plt.title('Ağırlıklı Tabakalı Bölme Sonrası Modellerin Train vs Test R² Skorları (Normal Veri)', fontsize=14, fontweight='bold')
+    plt.xticks(x_indices, df_results['Model'], rotation=15, fontsize=10)
+    plt.ylim(0, 1.05)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.legend(fontsize=11)
+    
+    for idx, row in df_results.iterrows():
+        plt.text(idx - width/2, row['Train_R2'] + 0.01, f"{row['Train_R2']:.2f}", ha='center', va='bottom', fontsize=9)
+        plt.text(idx + width/2, row['Test_R2'] + 0.01, f"{row['Test_R2']:.2f}", ha='center', va='bottom', fontsize=9)
+        
+    plt.tight_layout()
+    chart_path = os.path.join(results_dir, "train_test_comparison.png")
+    plt.savefig(chart_path, dpi=150)
+    plt.close()
+    print(f"[✓] Karşılaştırma bar grafiği kaydedildi: {chart_path}")
+
+    # 5. En Başarılı Model İçin Saçılım Grafiği (Predicted vs Actual) Çiz
+    best_test_preds = best_fitted_model.predict(X_test)
+    plt.figure(figsize=(8, 6))
+    plt.scatter(y_test, best_test_preds, alpha=0.7, color='#2ecc71', edgecolor='black', label='Hastalar')
+    lims = [min(min(y_test), min(best_test_preds)), max(max(y_test), max(best_test_preds))]
+    plt.plot(lims, lims, color='red', linestyle='--', linewidth=2, label='Mükemmel Tahmin Referansı')
+    
+    plt.xlabel('Gerçek HbA1c (%)', fontsize=12, fontweight='bold')
+    plt.ylabel('Tahmin Edilen HbA1c (%)', fontsize=12, fontweight='bold')
+    plt.title(f'En Başarılı Ağırlıklı Model ({best_model_name}) Tahmin Saçılım Grafiği\nTest R²: {df_results.loc[best_idx, "Test_R2"]:.4f}', fontsize=12, fontweight='bold')
+    plt.grid(True, linestyle=':', alpha=0.6)
+    plt.legend(fontsize=10)
+    plt.tight_layout()
+    predictions_path = os.path.join(results_dir, "best_model_predictions.png")
+    plt.savefig(predictions_path, dpi=150)
+    plt.close()
+    print(f"[✓] Tahmin saçılım grafiği kaydedildi: {predictions_path}")
+
+    # 6. Özellik Önem Grafiği
+    if hasattr(best_fitted_model, 'feature_importances_') or (hasattr(best_fitted_model, 'steps') and hasattr(best_fitted_model.steps[-1][1], 'feature_importances_')):
+        if hasattr(best_fitted_model, 'feature_importances_'):
+            importances = best_fitted_model.feature_importances_
+        else:
+            importances = best_fitted_model.steps[-1][1].feature_importances_
+            
+        indices = np.argsort(importances)[::-1]
+        
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x=importances[indices], y=X.columns[indices], palette='viridis')
+        plt.xlabel('Özellik Skoru (Gini/Gain Importance)', fontsize=12, fontweight='bold')
+        plt.ylabel('Girdi Değişkenleri (Features)', fontsize=12, fontweight='bold')
+        plt.title(f'En Başarılı Ağırlıklı Model ({best_model_name}) İçin Özellik Önem Sıralaması', fontsize=12, fontweight='bold')
+        plt.tight_layout()
+        importance_path = os.path.join(results_dir, "best_model_feature_importance.png")
+        plt.savefig(importance_path, dpi=150)
+        plt.close()
+        print(f"[✓] Özellik önem sırası grafiği kaydedildi: {importance_path}")
+
+    # 7. Markdown Tablosu Oluştur ve En İyi Modeli Koyu Yap
+    markdown_lines = []
+    markdown_lines.append("# 📊 Tekil Tabakalı Ağırlıklı Bölme Model Sonuçları (Normal Veri)")
+    markdown_lines.append("Bu tablo, temizlenmiş normal veri setinin (%80 Eğitim, %20 Test) olarak tabakalı bölünmesi ve **diyabetik hastalara 5 kat, prediyabetiklere 2 kat daha fazla hata cezası (sample weight) verilerek** GridSearchCV ile eğitilmesiyle elde edilen sonuçları göstermektedir.\n")
+    markdown_lines.append("| Model | Eğitim R² (Train) | Test R² (Test) | Fark (Gap R²) | Test MSE | Test MAE | Diyabetik Test MAE | Durum Analizi |")
+    markdown_lines.append("| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |")
+
+    for idx, row in df_results.iterrows():
+        is_best = (idx == best_idx)
+        
+        def fmt(val):
+            txt = f"{val:.4f}"
+            return f"**{txt}**" if is_best else txt
+
+        model_name_fmt = f"**{row['Model']}**" if is_best else row['Model']
+        status_fmt = f"**{row['Durum']}**" if is_best else row['Durum']
+        
+        line = f"| {model_name_fmt} | {fmt(row['Train_R2'])} | {fmt(row['Test_R2'])} | {fmt(row['Overfitting_Gap_R2'])} | {fmt(row['Test_MSE'])} | {fmt(row['Test_MAE'])} | {fmt(row['Diyabetik_MAE_Test'])} | {status_fmt} |"
+        markdown_lines.append(line)
+
+    markdown_content = "\n".join(markdown_lines)
+    
+    # Markdown Raporu Kaydet
+    md_file = os.path.join(results_dir, "stratified_comparison_results.md")
+    with open(md_file, "w", encoding="utf-8") as f:
+        f.write(markdown_content)
+    print(f"[✓] Markdown raporu kaydedildi: {md_file}")
+
+    # Sonuçları Konsola Bas
+    print("\n" + "="*95)
+    print("📋 TABAKALI AĞIRLIKLI MODEL KARŞILAŞTIRMA TABLOSU (NORMAL VERİ)")
+    print("="*95)
+    print(markdown_content)
+    print("="*95)
+
+if __name__ == "__main__":
+    main()

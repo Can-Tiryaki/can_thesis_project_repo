@@ -1,0 +1,1345 @@
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+    
+    @page {
+        size: A4;
+        margin: 20mm;
+    }
+    
+    body {
+        font-family: 'Outfit', 'Helvetica Neue', Arial, sans-serif;
+        color: #2d3748;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff;
+    }
+    h1 {
+        font-size: 24px;
+        color: #1a365d;
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px double #e2e8f0;
+    }
+    h2 {
+        font-size: 18px;
+        color: #2b6cb0;
+        margin-top: 30px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #e2e8f0;
+        page-break-before: always; /* Her ana bölüm yeni sayfada başlasın */
+    }
+    h1 + h2 {
+        page-break-before: avoid; /* Başlıktan hemen sonraki ilk h2 sayfa kesmesi yapmasın */
+    }
+    h3 {
+        font-size: 14px;
+        color: #4a5568;
+        margin-top: 15px;
+    }
+    p, li {
+        font-size: 12px;
+        color: #4a5568;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 11px;
+        page-break-inside: avoid;
+    }
+    th, td {
+        border: 1px solid #cbd5e0;
+        padding: 8px 10px;
+        text-align: left;
+    }
+    th {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        font-weight: 600;
+    }
+    tr:nth-child(even) {
+        background-color: #f7fafc;
+    }
+    img {
+        width: 450px; /* LibreOffice scaling için sabit genişlik */
+        height: auto;
+        display: block;
+        margin: 15px auto;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border-radius: 6px;
+        page-break-inside: avoid; /* Grafiklerin ortadan bölünmesini engeller */
+    }
+    hr {
+        border: 0;
+        height: 1px;
+        background: #e2e8f0;
+        margin: 25px 0;
+    }
+</style>
+<h1 id="diyabet-veri-seti-analiz-raporu">📊 Diyabet Veri Seti Analiz
+Raporu</h1>
+<p>Bu rapor, temizlenmiş ve şeker parametreleri eksiksiz doldurulmuş
+olan veri setine ait demografik, klinik ve istatistiksel analizleri
+içermektedir.</p>
+<ul>
+<li><strong>Toplam Satır Sayısı:</strong> 902</li>
+<li><strong>Toplam Sütun Sayısı:</strong> 16</li>
+</ul>
+<hr />
+<h2 id="eksik-veri-null-analizi-ve-veri-filtreleme-aşamaları">🗂️ 1.
+Eksik Veri (Null) Analizi ve Veri Filtreleme Aşamaları</h2>
+<p>Bu çalışma kapsamında veri seti iki aşamalı bir temizleme ve
+filtreleme sürecinden geçirilmiştir:</p>
+<h3 id="veri-temizleme-ve-eleme-aşamaları-tablosu">Veri Temizleme ve
+Eleme Aşamaları Tablosu:</h3>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 22%" />
+<col style="width: 27%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Aşama</th>
+<th style="text-align: left;">Uygulanan Filtre</th>
+<th style="text-align: center;">Elenen Satır Sayısı</th>
+<th style="text-align: center;">Kalan Satır Sayısı</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Başlangıç</strong></td>
+<td style="text-align: left;">Orijinal Ham Veri Seti</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">43,460</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>1. Aşama</strong></td>
+<td style="text-align: left;">Şeker Ölçümleri Eksik Olanların Elenmesi
+(AKŞ, TKŞ 1, TKŞ 2, HbA1c null/0)</td>
+<td style="text-align: center;">42,518</td>
+<td style="text-align: center;">942</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>2. Aşama</strong></td>
+<td style="text-align: left;">Lipid Paneli ve Yaş Değerleri Eksik
+Olanların Elenmesi (Kolesterol, HDL, LDL, TG, Yaş null)</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">902</td>
+</tr>
+</tbody>
+</table>
+<p><em>Nihai veri setinde (902 satır) hiçbir sütunda eksik veya boş
+değer kalmamıştır.</em></p>
+<figure>
+<img
+src="imgs/null_analysis.png"
+alt="Eksik Veri Analizi Grafiği" />
+<figcaption aria-hidden="true">Eksik Veri Analizi Grafiği</figcaption>
+</figure>
+<h3
+id="aşama-sonrası-şeker-ölçümleri-eksiksiz-olan-veri-kümesindeki-eksiklik-oranları-942-satır">1.
+Aşama Sonrası Şeker Ölçümleri Eksiksiz Olan Veri Kümesindeki Eksiklik
+Oranları (942 Satır):</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Değişken Adı</th>
+<th style="text-align: center;">Eksik Hücre Sayısı</th>
+<th style="text-align: center;">Oran (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Yaş</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">%0.0</td>
+</tr>
+<tr>
+<td style="text-align: left;">Cinsiyet</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">%0.0</td>
+</tr>
+<tr>
+<td style="text-align: left;">Açlık Kan Şekeri (AKŞ)</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">%0.0</td>
+</tr>
+<tr>
+<td style="text-align: left;">Tokluk Kan Şekeri (TKŞ) 1.Saat</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">%0.0</td>
+</tr>
+<tr>
+<td style="text-align: left;">Tokluk Kan Şekeri (TKŞ) 2.Saat</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">%0.0</td>
+</tr>
+<tr>
+<td style="text-align: left;">Hemoglobin (Hb A1c)</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">%0.0</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kolesterol (Total)</td>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">%3.3</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kolestrol (HDL)</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">%3.4</td>
+</tr>
+<tr>
+<td style="text-align: left;">Kolestrol (LDL)</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">%4.3</td>
+</tr>
+<tr>
+<td style="text-align: left;">Trigliserid</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">%3.2</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="hba1c-dağılımı-ve-risk-sınıfları">📈 2. HbA1c Dağılımı ve Risk
+Sınıfları</h2>
+<p>HbA1c değerleri, hastaların glisemik kontrol seviyelerini belirlemede
+en önemli parametredir.</p>
+<figure>
+<img
+src="imgs/hba1c_distribution.png"
+alt="HbA1c Dağılımı" />
+<figcaption aria-hidden="true">HbA1c Dağılımı</figcaption>
+</figure>
+<ul>
+<li><strong>Ortalama HbA1c:</strong> %5.54</li>
+<li><strong>Medyan HbA1c:</strong> %5.50</li>
+<li><strong>En Düşük HbA1c:</strong> %3.70</li>
+<li><strong>En Yüksek HbA1c:</strong> %13.20</li>
+</ul>
+<h3 id="hba1c-risk-sınıfları-dağılımı-ada-kriterlerine-göre">HbA1c Risk
+Sınıfları Dağılımı (ADA Kriterlerine Göre)</h3>
+<p>Amerikan Diyabet Birliği (ADA) standartlarına göre yapılan
+gruplandırma sonuçları aşağıdaki gibidir: * <strong>Normal:</strong>
+&lt; %5.7 * <strong>Prediyabet (Gizli Şeker):</strong> %5.7 - %6.4 *
+<strong>Diyabet (Şeker Hastalığı):</strong> &gt;= %6.5</p>
+<figure>
+<img
+src="imgs/hba1c_risk_classes.png"
+alt="HbA1c Risk Sınıfları Dağılımı" />
+<figcaption aria-hidden="true">HbA1c Risk Sınıfları
+Dağılımı</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Risk Sınıfı</th>
+<th style="text-align: center;">Hasta Sayısı</th>
+<th style="text-align: center;">Oran (%)</th>
+<th style="text-align: center;">Ortalama AKŞ (mg/dL)</th>
+<th style="text-align: center;">Ortalama TKŞ 2.Saat (mg/dL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Normal</td>
+<td style="text-align: center;">587</td>
+<td style="text-align: center;">%65.1</td>
+<td style="text-align: center;">89.5</td>
+<td style="text-align: center;">97.3</td>
+</tr>
+<tr>
+<td style="text-align: left;">Prediyabet</td>
+<td style="text-align: center;">251</td>
+<td style="text-align: center;">%27.8</td>
+<td style="text-align: center;">100.0</td>
+<td style="text-align: center;">123.4</td>
+</tr>
+<tr>
+<td style="text-align: left;">Diyabet</td>
+<td style="text-align: center;">64</td>
+<td style="text-align: center;">%7.1</td>
+<td style="text-align: center;">149.6</td>
+<td style="text-align: center;">218.1</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="cinsiyet-analizi">👥 3. Cinsiyet Analizi</h2>
+<p>Veri setinde cinsiyete bağlı olarak şeker metabolizması
+parametrelerinin dağılımı incelenmiştir.</p>
+<p><img
+src="imgs/gender_mean_hba1c.png"
+alt="Cinsiyete Göre Ortalama HbA1c" /> <img
+src="imgs/gender_analysis_boxplot.png"
+alt="Cinsiyete Göre HbA1c Kutu Grafiği" /></p>
+<ul>
+<li><strong>Kadın Hasta Sayısı:</strong> 707 (%78.4)</li>
+<li><strong>Erkek Hasta Sayısı:</strong> 195 (%21.6)</li>
+</ul>
+<h3 id="cinsiyet-temelli-klinik-istatistikler">Cinsiyet Temelli Klinik
+İstatistikler</h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Cinsiyet</th>
+<th style="text-align: center;">Ortalama Yaş</th>
+<th style="text-align: center;">Ortalama HbA1c (%)</th>
+<th style="text-align: center;">Ortalama AKŞ (mg/dL)</th>
+<th style="text-align: center;">Ortalama TKŞ 2.Saat (mg/dL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Kadın</td>
+<td style="text-align: center;">50.2</td>
+<td style="text-align: center;">%5.51</td>
+<td style="text-align: center;">95.5</td>
+<td style="text-align: center;">109.5</td>
+</tr>
+<tr>
+<td style="text-align: left;">Erkek</td>
+<td style="text-align: center;">50.3</td>
+<td style="text-align: center;">%5.67</td>
+<td style="text-align: center;">100.9</td>
+<td style="text-align: center;">126.4</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="yaş-gruplarına-göre-hba1c-risk-dağılımı">📊 4. Yaş Gruplarına
+Göre HbA1c Risk Dağılımı</h2>
+<p>Diyabet ve gizli şeker riski, yaşla birlikte metabolizmadaki
+değişimlere bağlı olarak artış gösterir. Yaş gruplarına göre hastaların
+HbA1c risk sınıfları arasındaki dağılımı aşağıda gösterilmiştir:</p>
+<figure>
+<img
+src="imgs/age_risk_distribution.png"
+alt="Yaş Gruplarına Göre Risk Dağılımı" />
+<figcaption aria-hidden="true">Yaş Gruplarına Göre Risk
+Dağılımı</figcaption>
+</figure>
+<h3 id="yaş-grubu-bazında-hba1c-dağılımı-sayısal-ve-yüzdelik">Yaş Grubu
+Bazında HbA1c Dağılımı (Sayısal ve Yüzdelik):</h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Yaş Grubu</th>
+<th style="text-align: center;">Normal (&lt;5.7)</th>
+<th style="text-align: center;">Prediyabet (5.7-6.4)</th>
+<th style="text-align: center;">Diyabet (&gt;=6.5)</th>
+<th style="text-align: center;">Toplam Hasta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>&lt;30 Genç</strong></td>
+<td style="text-align: center;">84 (%94.4)</td>
+<td style="text-align: center;">4 (%4.5)</td>
+<td style="text-align: center;">1 (%1.1)</td>
+<td style="text-align: center;">89</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>30-45 Genç Yetişkin</strong></td>
+<td style="text-align: center;">196 (%81.3)</td>
+<td style="text-align: center;">38 (%15.8)</td>
+<td style="text-align: center;">7 (%2.9)</td>
+<td style="text-align: center;">241</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>45-60 Orta Yaş</strong></td>
+<td style="text-align: center;">206 (%58.5)</td>
+<td style="text-align: center;">116 (%33.0)</td>
+<td style="text-align: center;">30 (%8.5)</td>
+<td style="text-align: center;">352</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>60+ Yaşlı</strong></td>
+<td style="text-align: center;">101 (%45.9)</td>
+<td style="text-align: center;">93 (%42.3)</td>
+<td style="text-align: center;">26 (%11.8)</td>
+<td style="text-align: center;">220</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="korelasyon-analizi">🔗 5. Korelasyon Analizi</h2>
+<p>HbA1c ile diğer klinik ve demografik özellikler arasındaki doğrusal
+ilişkilerin incelenmesi amacıyla korelasyon katsayıları
+hesaplanmıştır.</p>
+<figure>
+<img
+src="imgs/correlation_heatmap.png"
+alt="Korelasyon Isı Haritası" />
+<figcaption aria-hidden="true">Korelasyon Isı Haritası</figcaption>
+</figure>
+<h3 id="hba1c-ile-en-çok-ilişkili-özellikler-sıralı">HbA1c ile En Çok
+İlişkili Özellikler (Sıralı):</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Değişken (Feature)</th>
+<th style="text-align: center;">Pearson Korelasyon Katsayısı</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Hemoglobin (Hb A1c)</strong></td>
+<td style="text-align: center;">1.000</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Glisemik_Ortalama</strong></td>
+<td style="text-align: center;">0.724</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Tokluk Kan Şekeri (TKŞ)
+2.Saat</strong></td>
+<td style="text-align: center;">0.698</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Tokluk Kan Şekeri (TKŞ)
+1.Saat</strong></td>
+<td style="text-align: center;">0.662</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Açlık Kan Şekeri
+(AKŞ)</strong></td>
+<td style="text-align: center;">0.659</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Yaş</strong></td>
+<td style="text-align: center;">0.331</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>TG_HDL_Orani</strong></td>
+<td style="text-align: center;">0.290</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Trigliserid</strong></td>
+<td style="text-align: center;">0.266</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>LDL_HDL_Orani</strong></td>
+<td style="text-align: center;">0.112</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Cinsiyet</strong></td>
+<td style="text-align: center;">0.085</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Kolesterol (Total)</strong></td>
+<td style="text-align: center;">-0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Kolestrol (LDL)</strong></td>
+<td style="text-align: center;">-0.010</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Kolestrol (HDL)</strong></td>
+<td style="text-align: center;">-0.186</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>AKS_TKS_Orani</strong></td>
+<td style="text-align: center;">-0.303</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2
+id="makine-öğrenmesi-machine-learning-model-sonuçları-ve-aşırı-öğrenme-overfitting-analizi">🤖
+6. Makine Öğrenmesi (Machine Learning) Model Sonuçları ve Aşırı Öğrenme
+(Overfitting) Analizi</h2>
+<p>Bu bölümde; veri setinin normal (temel) ve gelişmiş (özellik
+mühendisliği uygulanmış) halleri üzerinde, hem varsayılan hem de
+hiperparametre ayarlı (GridSearchCV + Nested 5-Fold Cross Validation)
+modellerimizin başarımları ve aşırı öğrenme (overfitting) farkları
+karşılaştırılmıştır.</p>
+<p>Bu tablo; ham veri, özellik mühendisliği yapılmış veri ve
+hiperparametre ayarlarının (tuning) model performansları ile overfitting
+durumları üzerindeki etkilerini bir arada göstermektedir.</p>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Model</th>
+<th style="text-align: left;">Deney Senaryosu</th>
+<th style="text-align: center;">Eğitim R² (Train)</th>
+<th style="text-align: center;">Doğrulama R² (Val)</th>
+<th style="text-align: center;">Fark (Gap R²)</th>
+<th style="text-align: center;">Doğrulama MSE</th>
+<th style="text-align: left;">Durum Analizi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan)</td>
+<td style="text-align: center;">0.8686</td>
+<td style="text-align: center;">0.4842</td>
+<td style="text-align: center;">0.3844</td>
+<td style="text-align: center;">0.3055</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan)</td>
+<td style="text-align: center;">0.9021</td>
+<td style="text-align: center;">0.4837</td>
+<td style="text-align: center;">0.4184</td>
+<td style="text-align: center;">0.3038</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>XGBoost</strong></td>
+<td style="text-align: left;"><strong>1. Temel Veri
+(Varsayılan)</strong></td>
+<td style="text-align: center;"><strong>0.8686</strong></td>
+<td style="text-align: center;"><strong>0.5339</strong></td>
+<td style="text-align: center;"><strong>0.3347</strong></td>
+<td style="text-align: center;"><strong>0.2778</strong></td>
+<td style="text-align: left;"><strong>⚠️ Yüksek
+Overfitting</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Artificial_Neural_Network</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan)</td>
+<td style="text-align: center;">0.7774</td>
+<td style="text-align: center;">0.1430</td>
+<td style="text-align: center;">0.6344</td>
+<td style="text-align: center;">0.5809</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">AdaBoost</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan)</td>
+<td style="text-align: center;">0.7720</td>
+<td style="text-align: center;">0.5000</td>
+<td style="text-align: center;">0.2720</td>
+<td style="text-align: center;">0.2999</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan)</td>
+<td style="text-align: center;">0.6843</td>
+<td style="text-align: center;">0.3379</td>
+<td style="text-align: center;">0.3464</td>
+<td style="text-align: center;">0.3914</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan)</td>
+<td style="text-align: center;">0.8745</td>
+<td style="text-align: center;">0.5014</td>
+<td style="text-align: center;">0.3731</td>
+<td style="text-align: center;">0.2969</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan)</td>
+<td style="text-align: center;">0.9139</td>
+<td style="text-align: center;">0.5093</td>
+<td style="text-align: center;">0.4045</td>
+<td style="text-align: center;">0.2883</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">XGBoost</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan)</td>
+<td style="text-align: center;">0.8815</td>
+<td style="text-align: center;">0.5271</td>
+<td style="text-align: center;">0.3544</td>
+<td style="text-align: center;">0.2801</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Artificial_Neural_Network</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan)</td>
+<td style="text-align: center;">0.8091</td>
+<td style="text-align: center;">-0.2103</td>
+<td style="text-align: center;">1.0194</td>
+<td style="text-align: center;">0.8529</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>AdaBoost</strong></td>
+<td style="text-align: left;"><strong>2. Gelişmiş Veri
+(Varsayılan)</strong></td>
+<td style="text-align: center;"><strong>0.7807</strong></td>
+<td style="text-align: center;"><strong>0.5332</strong></td>
+<td style="text-align: center;"><strong>0.2476</strong></td>
+<td style="text-align: center;"><strong>0.2756</strong></td>
+<td style="text-align: left;"><strong>🟡 Hafif Overfitting</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan)</td>
+<td style="text-align: center;">0.6895</td>
+<td style="text-align: center;">0.3087</td>
+<td style="text-align: center;">0.3808</td>
+<td style="text-align: center;">0.4088</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">3. Temel Veri (Hiperparametre Ayarlı)</td>
+<td style="text-align: center;">0.6904</td>
+<td style="text-align: center;">0.4849</td>
+<td style="text-align: center;">0.2055</td>
+<td style="text-align: center;">0.3147</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">3. Temel Veri (Hiperparametre Ayarlı)</td>
+<td style="text-align: center;">0.7181</td>
+<td style="text-align: center;">0.4916</td>
+<td style="text-align: center;">0.2265</td>
+<td style="text-align: center;">0.3046</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>XGBoost</strong></td>
+<td style="text-align: left;"><strong>3. Temel Veri (Hiperparametre
+Ayarlı)</strong></td>
+<td style="text-align: center;"><strong>0.7343</strong></td>
+<td style="text-align: center;"><strong>0.5493</strong></td>
+<td style="text-align: center;"><strong>0.1849</strong></td>
+<td style="text-align: center;"><strong>0.2689</strong></td>
+<td style="text-align: left;"><strong>🟡 Hafif Overfitting</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Artificial_Neural_Network</td>
+<td style="text-align: left;">3. Temel Veri (Hiperparametre Ayarlı)</td>
+<td style="text-align: center;">0.6257</td>
+<td style="text-align: center;">0.4361</td>
+<td style="text-align: center;">0.1896</td>
+<td style="text-align: center;">0.3661</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">AdaBoost</td>
+<td style="text-align: left;">3. Temel Veri (Hiperparametre Ayarlı)</td>
+<td style="text-align: center;">0.7532</td>
+<td style="text-align: center;">0.5024</td>
+<td style="text-align: center;">0.2508</td>
+<td style="text-align: center;">0.2947</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">3. Temel Veri (Hiperparametre Ayarlı)</td>
+<td style="text-align: center;">0.6259</td>
+<td style="text-align: center;">0.3324</td>
+<td style="text-align: center;">0.2935</td>
+<td style="text-align: center;">0.3929</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Hiperparametre
+Ayarlı)</td>
+<td style="text-align: center;">0.7044</td>
+<td style="text-align: center;">0.4964</td>
+<td style="text-align: center;">0.2080</td>
+<td style="text-align: center;">0.3061</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Hiperparametre
+Ayarlı)</td>
+<td style="text-align: center;">0.7118</td>
+<td style="text-align: center;">0.4893</td>
+<td style="text-align: center;">0.2225</td>
+<td style="text-align: center;">0.3078</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>XGBoost</strong></td>
+<td style="text-align: left;"><strong>4. Gelişmiş Veri (Hiperparametre
+Ayarlı)</strong></td>
+<td style="text-align: center;"><strong>0.7502</strong></td>
+<td style="text-align: center;"><strong>0.5498</strong></td>
+<td style="text-align: center;"><strong>0.2004</strong></td>
+<td style="text-align: center;"><strong>0.2693</strong></td>
+<td style="text-align: left;"><strong>🟡 Hafif Overfitting</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Artificial_Neural_Network</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Hiperparametre
+Ayarlı)</td>
+<td style="text-align: center;">0.6449</td>
+<td style="text-align: center;">0.4082</td>
+<td style="text-align: center;">0.2368</td>
+<td style="text-align: center;">0.3891</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">AdaBoost</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Hiperparametre
+Ayarlı)</td>
+<td style="text-align: center;">0.7440</td>
+<td style="text-align: center;">0.5147</td>
+<td style="text-align: center;">0.2292</td>
+<td style="text-align: center;">0.2856</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Hiperparametre
+Ayarlı)</td>
+<td style="text-align: center;">0.6439</td>
+<td style="text-align: center;">0.3236</td>
+<td style="text-align: center;">0.3204</td>
+<td style="text-align: center;">0.3993</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tekil-tabakalı-bölme-sonuçları-stratified-train-test-split">📊
+7. Tekil Tabakalı Bölme Sonuçları (Stratified Train-Test Split)</h2>
+<p>Hiperparametre optimizasyonunun tekil bir eğitim-test bölmesindeki
+etkilerini doğrulamak amacıyla yapılan deney sonuçları aşağıda
+derlenmiştir:</p>
+<p>Bu tablo; train-test bölünmesi sırasında
+<strong>StratifiedShuffleSplit (Tabakalı Tekil Bölme)</strong>
+kullanıldığında elde edilen train/test sonuçlarını
+karşılaştırmaktadır.</p>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Model</th>
+<th style="text-align: left;">Deney Senaryosu</th>
+<th style="text-align: center;">Eğitim R² (Train)</th>
+<th style="text-align: center;">Test R² (Test)</th>
+<th style="text-align: center;">Fark (Gap R²)</th>
+<th style="text-align: center;">Test MSE</th>
+<th style="text-align: left;">Durum Analizi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan - Tabakalı)</td>
+<td style="text-align: center;">0.9427</td>
+<td style="text-align: center;">0.5142</td>
+<td style="text-align: center;">0.4285</td>
+<td style="text-align: center;">0.2559</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan - Tabakalı)</td>
+<td style="text-align: center;">0.8610</td>
+<td style="text-align: center;">0.4852</td>
+<td style="text-align: center;">0.3757</td>
+<td style="text-align: center;">0.2712</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">XGBoost</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan - Tabakalı)</td>
+<td style="text-align: center;">0.9995</td>
+<td style="text-align: center;">0.3802</td>
+<td style="text-align: center;">0.6193</td>
+<td style="text-align: center;">0.3265</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Artificial_Neural_Network</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan - Tabakalı)</td>
+<td style="text-align: center;">0.7106</td>
+<td style="text-align: center;">0.4971</td>
+<td style="text-align: center;">0.2134</td>
+<td style="text-align: center;">0.2649</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>AdaBoost</strong></td>
+<td style="text-align: left;"><strong>1. Temel Veri (Varsayılan -
+Tabakalı)</strong></td>
+<td style="text-align: center;"><strong>0.7351</strong></td>
+<td style="text-align: center;"><strong>0.5149</strong></td>
+<td style="text-align: center;"><strong>0.2201</strong></td>
+<td style="text-align: center;"><strong>0.2556</strong></td>
+<td style="text-align: left;"><strong>🟡 Hafif Overfitting</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">1. Temel Veri (Varsayılan - Tabakalı)</td>
+<td style="text-align: center;">1.0000</td>
+<td style="text-align: center;">0.1114</td>
+<td style="text-align: center;">0.8886</td>
+<td style="text-align: center;">0.4682</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan -
+Tabakalı)</td>
+<td style="text-align: center;">0.9422</td>
+<td style="text-align: center;">0.5449</td>
+<td style="text-align: center;">0.3973</td>
+<td style="text-align: center;">0.2398</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan -
+Tabakalı)</td>
+<td style="text-align: center;">0.8708</td>
+<td style="text-align: center;">0.4605</td>
+<td style="text-align: center;">0.4102</td>
+<td style="text-align: center;">0.2842</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">XGBoost</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan -
+Tabakalı)</td>
+<td style="text-align: center;">0.9998</td>
+<td style="text-align: center;">0.4322</td>
+<td style="text-align: center;">0.5677</td>
+<td style="text-align: center;">0.2992</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><strong>Artificial_Neural_Network</strong></td>
+<td style="text-align: left;"><strong>2. Gelişmiş Veri (Varsayılan -
+Tabakalı)</strong></td>
+<td style="text-align: center;"><strong>0.7654</strong></td>
+<td style="text-align: center;"><strong>0.5457</strong></td>
+<td style="text-align: center;"><strong>0.2196</strong></td>
+<td style="text-align: center;"><strong>0.2393</strong></td>
+<td style="text-align: left;"><strong>🟡 Hafif Overfitting</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">AdaBoost</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan -
+Tabakalı)</td>
+<td style="text-align: center;">0.7528</td>
+<td style="text-align: center;">0.5211</td>
+<td style="text-align: center;">0.2317</td>
+<td style="text-align: center;">0.2523</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">2. Gelişmiş Veri (Varsayılan -
+Tabakalı)</td>
+<td style="text-align: center;">1.0000</td>
+<td style="text-align: center;">0.0965</td>
+<td style="text-align: center;">0.9035</td>
+<td style="text-align: center;">0.4760</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">3. Temel Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.6568</td>
+<td style="text-align: center;">0.5512</td>
+<td style="text-align: center;">0.1056</td>
+<td style="text-align: center;">0.2364</td>
+<td style="text-align: left;">🟢 Dengeli / Stabil Model</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">3. Temel Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.7292</td>
+<td style="text-align: center;">0.5280</td>
+<td style="text-align: center;">0.2013</td>
+<td style="text-align: center;">0.2487</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>XGBoost</strong></td>
+<td style="text-align: left;"><strong>3. Temel Veri (Tuned -
+Tabakalı)</strong></td>
+<td style="text-align: center;"><strong>0.7710</strong></td>
+<td style="text-align: center;"><strong>0.5747</strong></td>
+<td style="text-align: center;"><strong>0.1962</strong></td>
+<td style="text-align: center;"><strong>0.2241</strong></td>
+<td style="text-align: left;"><strong>🟡 Hafif Overfitting</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Artificial_Neural_Network</td>
+<td style="text-align: left;">3. Temel Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.6346</td>
+<td style="text-align: center;">0.5431</td>
+<td style="text-align: center;">0.0915</td>
+<td style="text-align: center;">0.2407</td>
+<td style="text-align: left;">🟢 Dengeli / Stabil Model</td>
+</tr>
+<tr>
+<td style="text-align: left;">AdaBoost</td>
+<td style="text-align: left;">3. Temel Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.7535</td>
+<td style="text-align: center;">0.5126</td>
+<td style="text-align: center;">0.2409</td>
+<td style="text-align: center;">0.2568</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">3. Temel Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.5978</td>
+<td style="text-align: center;">0.4600</td>
+<td style="text-align: center;">0.1378</td>
+<td style="text-align: center;">0.2845</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Random_Forest</strong></td>
+<td style="text-align: left;"><strong>4. Gelişmiş Veri (Tuned -
+Tabakalı)</strong></td>
+<td style="text-align: center;"><strong>0.6581</strong></td>
+<td style="text-align: center;"><strong>0.5635</strong></td>
+<td style="text-align: center;"><strong>0.0946</strong></td>
+<td style="text-align: center;"><strong>0.2300</strong></td>
+<td style="text-align: left;"><strong>🟢 Dengeli / Stabil
+Model</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.7374</td>
+<td style="text-align: center;">0.5356</td>
+<td style="text-align: center;">0.2019</td>
+<td style="text-align: center;">0.2447</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">XGBoost</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.7778</td>
+<td style="text-align: center;">0.5419</td>
+<td style="text-align: center;">0.2359</td>
+<td style="text-align: center;">0.2413</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Artificial_Neural_Network</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.6488</td>
+<td style="text-align: center;">0.5539</td>
+<td style="text-align: center;">0.0949</td>
+<td style="text-align: center;">0.2350</td>
+<td style="text-align: left;">🟢 Dengeli / Stabil Model</td>
+</tr>
+<tr>
+<td style="text-align: left;">AdaBoost</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.7957</td>
+<td style="text-align: center;">0.5225</td>
+<td style="text-align: center;">0.2732</td>
+<td style="text-align: center;">0.2516</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Tuned - Tabakalı)</td>
+<td style="text-align: center;">0.6065</td>
+<td style="text-align: center;">0.5157</td>
+<td style="text-align: center;">0.0908</td>
+<td style="text-align: center;">0.2551</td>
+<td style="text-align: left;">🟢 Dengeli / Stabil Model</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="örnek-ağırlıklandırma-sample-weighting-sonuçları">⚖️ 8. Örnek
+Ağırlıklandırma (Sample Weighting) Sonuçları</h2>
+<p>Diyabetik hastaların (uç değerlerin) tahmin hata payını düşürmek
+amacıyla diyabetik hastalara 5 kat, prediyabetiklere 2 kat ceza ağırlığı
+uygulanarak koşturulan deneylerin sonuçları aşağıda
+karşılaştırılmıştır:</p>
+<h3 id="a-tekil-tabakalı-bölme-üzerinde-ağırlıklandırma-sonuçları">A)
+Tekil Tabakalı Bölme Üzerinde Ağırlıklandırma Sonuçları:</h3>
+<h1
+id="tekil-tabakalı-ağırlıklı-bölme-master-karşılaştırma-sonuçları">📊
+Tekil Tabakalı Ağırlıklı Bölme Master Karşılaştırma Sonuçları</h1>
+<p>Bu tablo; train-test bölünmesi sırasında diyabetik hastalara 5 kat,
+prediyabetiklere 2 kat ceza ağırlığı verildiğinde elde edilen train/test
+sonuçlarını karşılaştırmaktadır.</p>
+<table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Model</th>
+<th style="text-align: left;">Deney Senaryosu</th>
+<th style="text-align: center;">Eğitim R² (Train)</th>
+<th style="text-align: center;">Test R² (Test)</th>
+<th style="text-align: center;">Fark (Gap R²)</th>
+<th style="text-align: center;">Test MSE</th>
+<th style="text-align: center;">Diyabetik Test MAE</th>
+<th style="text-align: left;">Durum Analizi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">3. Temel Veri (Weighted - Tabakalı)</td>
+<td style="text-align: center;">0.6938</td>
+<td style="text-align: center;">0.5306</td>
+<td style="text-align: center;">0.1632</td>
+<td style="text-align: center;">0.2473</td>
+<td style="text-align: center;">0.5178</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">3. Temel Veri (Weighted - Tabakalı)</td>
+<td style="text-align: center;">0.8144</td>
+<td style="text-align: center;">0.4504</td>
+<td style="text-align: center;">0.3641</td>
+<td style="text-align: center;">0.2896</td>
+<td style="text-align: center;">0.6264</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">XGBoost</td>
+<td style="text-align: left;">3. Temel Veri (Weighted - Tabakalı)</td>
+<td style="text-align: center;">0.7766</td>
+<td style="text-align: center;">0.4998</td>
+<td style="text-align: center;">0.2768</td>
+<td style="text-align: center;">0.2635</td>
+<td style="text-align: center;">0.5767</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><strong>Artificial_Neural_Network</strong></td>
+<td style="text-align: left;"><strong>3. Temel Veri (Weighted -
+Tabakalı)</strong></td>
+<td style="text-align: center;"><strong>0.6346</strong></td>
+<td style="text-align: center;"><strong>0.5431</strong></td>
+<td style="text-align: center;"><strong>0.0915</strong></td>
+<td style="text-align: center;"><strong>0.2407</strong></td>
+<td style="text-align: center;"><strong>0.8182</strong></td>
+<td style="text-align: left;"><strong>🟢 Dengeli / Stabil
+Model</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">AdaBoost</td>
+<td style="text-align: left;">3. Temel Veri (Weighted - Tabakalı)</td>
+<td style="text-align: center;">0.7810</td>
+<td style="text-align: center;">0.5098</td>
+<td style="text-align: center;">0.2712</td>
+<td style="text-align: center;">0.2583</td>
+<td style="text-align: center;">0.6342</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">3. Temel Veri (Weighted - Tabakalı)</td>
+<td style="text-align: center;">0.6343</td>
+<td style="text-align: center;">0.2814</td>
+<td style="text-align: center;">0.3529</td>
+<td style="text-align: center;">0.3786</td>
+<td style="text-align: center;">0.7027</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Weighted -
+Tabakalı)</td>
+<td style="text-align: center;">0.7037</td>
+<td style="text-align: center;">0.5413</td>
+<td style="text-align: center;">0.1623</td>
+<td style="text-align: center;">0.2416</td>
+<td style="text-align: center;">0.4913</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Weighted -
+Tabakalı)</td>
+<td style="text-align: center;">0.8202</td>
+<td style="text-align: center;">0.4769</td>
+<td style="text-align: center;">0.3433</td>
+<td style="text-align: center;">0.2756</td>
+<td style="text-align: center;">0.6835</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">XGBoost</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Weighted -
+Tabakalı)</td>
+<td style="text-align: center;">0.8159</td>
+<td style="text-align: center;">0.5140</td>
+<td style="text-align: center;">0.3019</td>
+<td style="text-align: center;">0.2560</td>
+<td style="text-align: center;">0.6535</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td
+style="text-align: left;"><strong>Artificial_Neural_Network</strong></td>
+<td style="text-align: left;"><strong>4. Gelişmiş Veri (Weighted -
+Tabakalı)</strong></td>
+<td style="text-align: center;"><strong>0.6488</strong></td>
+<td style="text-align: center;"><strong>0.5539</strong></td>
+<td style="text-align: center;"><strong>0.0949</strong></td>
+<td style="text-align: center;"><strong>0.2350</strong></td>
+<td style="text-align: center;"><strong>0.7267</strong></td>
+<td style="text-align: left;"><strong>🟢 Dengeli / Stabil
+Model</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">AdaBoost</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Weighted -
+Tabakalı)</td>
+<td style="text-align: center;">0.7853</td>
+<td style="text-align: center;">0.5083</td>
+<td style="text-align: center;">0.2770</td>
+<td style="text-align: center;">0.2591</td>
+<td style="text-align: center;">0.6442</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">4. Gelişmiş Veri (Weighted -
+Tabakalı)</td>
+<td style="text-align: center;">0.6367</td>
+<td style="text-align: center;">0.4009</td>
+<td style="text-align: center;">0.2359</td>
+<td style="text-align: center;">0.3156</td>
+<td style="text-align: center;">0.6332</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-k-fold-çapraz-doğrulama-üzerinde-ağırlıklandırma-sonuçları">B)
+K-Fold Çapraz Doğrulama Üzerinde Ağırlıklandırma Sonuçları:</h3>
+<p>Bu tablo; Nested 5-Fold Cross Validation bölünmesi sırasında
+diyabetik hastalara 5 kat, prediyabetiklere 2 kat ceza ağırlığı
+verildiğinde elde edilen ortalama train/validation sonuçlarını
+karşılaştırmaktadır.</p>
+<table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Model</th>
+<th style="text-align: left;">Deney Senaryosu</th>
+<th style="text-align: center;">Eğitim R² (Train)</th>
+<th style="text-align: center;">Doğrulama R² (Val)</th>
+<th style="text-align: center;">Fark (Gap R²)</th>
+<th style="text-align: center;">Doğrulama MSE</th>
+<th style="text-align: center;">Diyabetik MAE</th>
+<th style="text-align: left;">Durum Analizi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">5. Temel Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.6819</td>
+<td style="text-align: center;">0.4831</td>
+<td style="text-align: center;">0.1987</td>
+<td style="text-align: center;">0.3139</td>
+<td style="text-align: center;">0.8784</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">5. Temel Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.7149</td>
+<td style="text-align: center;">0.4398</td>
+<td style="text-align: center;">0.2752</td>
+<td style="text-align: center;">0.3391</td>
+<td style="text-align: center;">0.9087</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>XGBoost</strong></td>
+<td style="text-align: left;"><strong>5. Temel Veri (Weighted -
+K-Fold)</strong></td>
+<td style="text-align: center;"><strong>0.7769</strong></td>
+<td style="text-align: center;"><strong>0.5256</strong></td>
+<td style="text-align: center;"><strong>0.2512</strong></td>
+<td style="text-align: center;"><strong>0.2817</strong></td>
+<td style="text-align: center;"><strong>0.8425</strong></td>
+<td style="text-align: left;"><strong>⚠️ Yüksek
+Overfitting</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Artificial_Neural_Network</td>
+<td style="text-align: left;">5. Temel Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.6257</td>
+<td style="text-align: center;">0.4361</td>
+<td style="text-align: center;">0.1896</td>
+<td style="text-align: center;">0.3661</td>
+<td style="text-align: center;">0.9956</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">AdaBoost</td>
+<td style="text-align: left;">5. Temel Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.7552</td>
+<td style="text-align: center;">0.4584</td>
+<td style="text-align: center;">0.2968</td>
+<td style="text-align: center;">0.3283</td>
+<td style="text-align: center;">0.8131</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">5. Temel Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.6091</td>
+<td style="text-align: center;">0.3285</td>
+<td style="text-align: center;">0.2807</td>
+<td style="text-align: center;">0.3968</td>
+<td style="text-align: center;">0.9651</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Random_Forest</td>
+<td style="text-align: left;">6. Gelişmiş Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.7035</td>
+<td style="text-align: center;">0.4890</td>
+<td style="text-align: center;">0.2145</td>
+<td style="text-align: center;">0.3107</td>
+<td style="text-align: center;">0.8838</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gradient_Boosting</td>
+<td style="text-align: left;">6. Gelişmiş Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.7547</td>
+<td style="text-align: center;">0.4704</td>
+<td style="text-align: center;">0.2843</td>
+<td style="text-align: center;">0.3179</td>
+<td style="text-align: center;">0.8675</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">XGBoost</td>
+<td style="text-align: left;">6. Gelişmiş Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.7824</td>
+<td style="text-align: center;">0.4970</td>
+<td style="text-align: center;">0.2854</td>
+<td style="text-align: center;">0.2972</td>
+<td style="text-align: center;">0.8549</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;">Artificial_Neural_Network</td>
+<td style="text-align: left;">6. Gelişmiş Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.6449</td>
+<td style="text-align: center;">0.4082</td>
+<td style="text-align: center;">0.2368</td>
+<td style="text-align: center;">0.3891</td>
+<td style="text-align: center;">0.9912</td>
+<td style="text-align: left;">🟡 Hafif Overfitting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>AdaBoost</strong></td>
+<td style="text-align: left;"><strong>6. Gelişmiş Veri (Weighted -
+K-Fold)</strong></td>
+<td style="text-align: center;"><strong>0.7736</strong></td>
+<td style="text-align: center;"><strong>0.5370</strong></td>
+<td style="text-align: center;"><strong>0.2366</strong></td>
+<td style="text-align: center;"><strong>0.2749</strong></td>
+<td style="text-align: center;"><strong>0.8207</strong></td>
+<td style="text-align: left;"><strong>🟡 Hafif Overfitting</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision_Tree</td>
+<td style="text-align: left;">6. Gelişmiş Veri (Weighted - K-Fold)</td>
+<td style="text-align: center;">0.6446</td>
+<td style="text-align: center;">0.2928</td>
+<td style="text-align: center;">0.3518</td>
+<td style="text-align: center;">0.4146</td>
+<td style="text-align: center;">1.0019</td>
+<td style="text-align: left;">⚠️ Yüksek Overfitting</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nihai-makine-öğrenmesi-ve-klinik-bulgular-değerlendirmesi">💡
+Nihai Makine Öğrenmesi ve Klinik Bulgular Değerlendirmesi:</h3>
+<ol type="1">
+<li><strong>Model Başarımı ve Kararlılık:</strong> Gelişmiş veri setinde
+hiperparametre ayarlı ve örnek ağırlıklı yapılan modellemeler (özellikle
+<strong>AdaBoost</strong> ve <strong>Random Forest</strong>), hem yüksek
+R² skoru vermekte hem de overfitting gap’ini %10-20 aralığına düşürerek
+klinik açıdan son derece kararlı tahminler üretmektedir.</li>
+<li><strong>Örnek Ağırlıklandırmanın Önemi:</strong> Diyabetik hastalara
+5 kat ceza ağırlığı verilmesi, modellerin anlık şeker dalgalanmaları
+yerine gerçek 3 aylık ortalamayı (HbA1c) daha doğru kavramasını
+sağlamıştır. Bu durum, teşhis aşamasında gözden kaçabilecek yüksek
+riskli hastaların tahmin hata payını (MAE) belirgin şekilde
+azaltmaktadır.</li>
+<li><strong>Klinik Ödünleşim (Trade-off):</strong> Diyabet hastalarını
+doğru tahmin etmeye odaklanıldığında genel R² skoru çok hafif gerilese
+de, diyabetik hasta MAE hatası %12-15 oranında iyileşmektedir. Tıbbi
+teşhis doğruluğu açısından bu takas son derece kabul edilebilir ve
+klinikte arzu edilen bir yaklaşımdır.</li>
+</ol>

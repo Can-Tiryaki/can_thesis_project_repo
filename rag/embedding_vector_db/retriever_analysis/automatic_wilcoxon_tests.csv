@@ -1,0 +1,8 @@
+Karsilastirma,p_degeri
+Temel vs Normal Hibrit,0.14314036668250213
+Temel vs Contextual Dense,0.33782698316605775
+Temel vs Contextual + Hibrit (Saf),0.000695017200105045
+Temel vs Contextual + Hibrit (MQ),0.06547287208124497
+Temel vs Hibrit + Reranker,0.0001728348358013614
+Temel vs Ctx + Hibrit + Reranker (Saf),1.8242410317753447e-05
+Temel vs Ctx + Hibrit + Reranker + MQ,0.00014220589570710632

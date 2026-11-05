@@ -1,0 +1,9 @@
+Sistem,Recall@5 (%),Precision@5 (%)
+1. Temel Vektör (Dense),61.8,16.7
+2. Normal Hibrit (BM25+Vec),65.8,18.0
+3. Contextual RAG (Dense),63.4,17.5
+4. Contextual + Hibrit (Saf),72.5,20.6
+5. Contextual + Hibrit (MQ),67.8,19.0
+6. Hibrit + Reranker,74.2,21.2
+7. Ctx + Hibrit + Reranker (Saf),75.8,21.4
+8. Ctx + Hibrit + Reranker + MQ,76.5,22.0

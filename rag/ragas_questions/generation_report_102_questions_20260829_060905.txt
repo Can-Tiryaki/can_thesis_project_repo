@@ -1,0 +1,24 @@
+============================================================
+       RAGAS VERİ ÜRETİM RAPORU - 20260829_060905
+============================================================
+[*] Hedeflenen Soru Sayısı: 100
+[*] Gerçekleşen Soru Sayısı: 102
+[*] Üretilen Mevcut Sütunlar: ['user_input', 'reference_contexts', 'reference', 'persona_name', 'query_style', 'query_length', 'synthesizer_name', 'n_context_chunks']
+
+[✓] Test Seti (Soru-Cevap) Kaydedildi: /kaggle/working/outputs/testset_mixed_102_soru_20260829_060905.csv
+[✓] Chunk-ID Haritası Kaydedildi: /kaggle/working/outputs/chunk_map_20260829_060905.csv
+
+------------------------------------------------------------
+📊 Synthesizer Tipine Göre 'n_context_chunks' Dağılımı:
+                                       count  mean   std  min  25%  50%  75%  max
+synthesizer_name                                                                 
+multi_hop_abstract_query_synthesizer    34.0  2.62  0.49  2.0  2.0  3.0  3.0  3.0
+multi_hop_specific_query_synthesizer    34.0  1.41  0.50  1.0  1.0  1.0  2.0  2.0
+single_hop_specific_query_synthesizer   34.0  1.00  0.00  1.0  1.0  1.0  1.0  1.0
+
+------------------------------------------------------------
+[*] Synthesizer Tipine Göre KESİN Exact Match Oranları:
+    - [single_hop_specific_query_synthesizer] Eşleşme: 34/34 (100.0%)
+    - [multi_hop_abstract_query_synthesizer] Eşleşme: 0/89 (0.0%)
+    - [multi_hop_specific_query_synthesizer] Eşleşme: 0/48 (0.0%)
+============================================================

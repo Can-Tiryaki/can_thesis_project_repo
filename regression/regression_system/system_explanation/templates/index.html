@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diyabet Karar Destek ve HbA1c Tahmin Sistemi - Sunum ve Rapor Arayüzü</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-box">
+                    <i class="fa-solid fa-heart-pulse logo-icon"></i>
+                </div>
+                <h2>Diyabet Karar Destek</h2>
+                <p>Tez / Makale Sunum Arayüzü</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-tab="tab-intro">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>1. Giriş & Klinik Önem</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-preprocessing">
+                    <i class="fa-solid fa-filter"></i>
+                    <span>2. Ön İşleme & Temizlik</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-eda">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>3. İstatistiki Dağılımlar</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-methodology">
+                    <i class="fa-solid fa-microscope"></i>
+                    <span>4. Metodoloji & Modeller</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-results-master">
+                    <i class="fa-solid fa-square-poll-vertical"></i>
+                    <span>5. Deneyler & Sonuçlar</span>
+                </a>
+                <a href="#" class="nav-item special-predict" data-tab="tab-predict">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>6. Canlı Karar Destek</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p>© 2026 Akademik Tez Çalışması</p>
+                <small>Hasan Şahin / Lisansüstü Tez</small>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- HEADER -->
+            <header class="content-header">
+                <div class="header-title">
+                    <h1>Diyabet Teşhis Karar Destek ve HbA1c Tahmin Sistemi</h1>
+                    <p>Makine Öğrenmesi Algoritmaları, Öznitelik Mühendisliği ve Örnek Ağırlıklandırmanın Karşılaştırmalı Analizi</p>
+                </div>
+                <div class="header-meta">
+                    <span class="status-badge"><i class="fa-solid fa-circle-check"></i> Tez Sunumu Hazır</span>
+                    <span class="model-badge">Random Forest Regressor</span>
+                </div>
+            </header>
+
+            <!-- TAB 1: GİRİŞ & KLİNİK ÖNEM -->
+            <section id="tab-intro" class="tab-content active">
+                <div class="card glass">
+                    <h3><i class="fa-solid fa-circle-info text-cyan"></i> 1. Giriş ve Çalışmanın Klinik Önemi</h3>
+                    <p><strong>Hemoglobin A1c (HbA1c)</strong>, kandaki hemoglobin moleküllerine glukoz bağlanmasıyla (glikasyon) oluşan ve son 2-3 aylık ortalama kan şekeri düzeyini yansıtan kritik bir biyokimyasal parametredir. Günlük kan şekeri ölçümlerinin aksine, açlık durumundan, anlık beslenmeden veya egzersizden etkilenmediği için diyabetin teşhisi, takibi ve tedavisinin planlanmasında altın standart olarak kabul edilir.</p>
+                    
+                    <div class="grid-2 margin-top-2">
+                        <div class="info-text-box">
+                            <h4><i class="fa-solid fa-triangle-exclamation text-yellow"></i> Klinik Problem Tanımı</h4>
+                            <p>Geleneksel laboratuvar yöntemleriyle HbA1c tayini zaman alıcıdır ve laboratuvar altyapısı gerektirir. Hastaların günlük olarak takip ettiği Açlık Kan Şekeri (AKŞ) ve Tokluk Kan Şekeri (TKŞ) parametreleri ile lipid profili (LDL, HDL, Kolesterol, Trigliserid) parametreleri arasındaki karmaşık doğrusal olmayan ilişkileri manuel olarak yorumlamak klinik olarak zordur.</p>
+                        </div>
+                        <div class="info-text-box">
+                            <h4><i class="fa-solid fa-bullseye text-cyan"></i> Çalışmanın Amacı</h4>
+                            <p>Bu tez/makale çalışmasında; makine öğrenmesi modelleri kullanılarak, hastanın <strong>demografik verileri (Yaş, Cinsiyet), günlük şeker takipleri ve lipid profili üzerinden</strong> HbA1c değerinin yüksek doğrulukla ve anlık olarak tahmin edilmesi amaçlanmıştır. Bu sayede, diyabet teşhisi ve erken tarama süreçleri için otomatik bir karar destek mekanizması kurulmuştur.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-3 margin-top-2">
+                        <div class="stat-box">
+                            <span class="stat-val">Normal</span>
+                            <span class="stat-lbl">&lt; %5.7 HbA1c (Sağlıklı Seviye)</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val text-yellow">Prediyabet</span>
+                            <span class="stat-lbl">%5.7 - %6.4 HbA1c (Gizli Şeker)</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val text-red">Diyabet</span>
+                            <span class="stat-lbl">&gt;= %6.5 HbA1c (Diyabet Teşhisi)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: ÖN İŞLEME & TEMİZLİK -->
+            <section id="tab-preprocessing" class="tab-content">
+                <div class="card glass">
+                    <h3><i class="fa-solid fa-screwdriver-wrench text-cyan"></i> 2. Veri Ön İşleme ve Temizleme Akışı</h3>
+                    <p>Çalışmada kullanılan ham veri seti 43.460 hastayı içermekteydi. Ancak tıp biliminde veri analizi yaparken eksik (null) değerler model başarısını doğrudan etkiler. Bu çalışmada iki aşamalı bir veri eleme ve temizleme protokolü uygulanmıştır:</p>
+                    
+                    <div class="table-container margin-top-1">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Aşama</th>
+                                    <th>Uygulanan Eleme Filtresi</th>
+                                    <th>Elenen Hasta Sayısı</th>
+                                    <th>Kalan Hasta Sayısı</th>
+                                    <th>Klinik Rasyonalite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Başlangıç</strong></td>
+                                    <td>Ham Veri Seti Yüklemesi</td>
+                                    <td>-</td>
+                                    <td>43,460</td>
+                                    <td>Hastaneden toplanan tüm hasta profilleri.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>1. Aşama</strong></td>
+                                    <td>Glisemik Parametre Eksikliği olanların elenmesi (AKŞ, TKŞ 1, TKŞ 2 veya HbA1c değeri null veya 0 olanlar)</td>
+                                    <td>42,518</td>
+                                    <td>942</td>
+                                    <td>Şeker dalgalanması olmayan veya ölçülmemiş hastalar diyabet tahmini için kullanılamaz.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>2. Aşama</strong></td>
+                                    <td>Lipid Paneli ve Yaş Eksikliği olanların elenmesi (Total Kolesterol, HDL, LDL, Trigliserid veya Yaş null olanlar)</td>
+                                    <td>40</td>
+                                    <td><strong>902</strong></td>
+                                    <td>Öznitelik mühendisliğinde kullanılacak olan lipid oranlarının hesaplanabilmesi için tam veri şarttır.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="grid-2 margin-top-2">
+                    <div class="card glass">
+                        <h3><i class="fa-solid fa-chart-simple text-cyan"></i> 1. Aşama Sonrası Eksiklik Analizi (942 Hasta)</h3>
+                        <p>Diyabetik şeker parametreleri eksiksiz olan 942 hastada lipid paneli eksikliklerinin dağılımı yanda gösterilmiştir. Bu 40 hasta elenerek 902 satırlık nihai temiz veri kümesi elde edilmiştir:</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/null_analysis.png') }}" alt="Eksik Veri Analizi" class="responsive-img">
+                        </div>
+                    </div>
+
+                    <div class="card glass">
+                        <h3><i class="fa-solid fa-lightbulb text-cyan"></i> Klinik Öznitelik Mühendisliği (Feature Engineering)</h3>
+                        <p>Klinik çalışmalardan elde edilen bilgilere göre, lipid oranları ve kan şekeri dengeleri diyabet teşhisinde tekil değişkenlerden daha güçlü ipuçları sunar. Bu amaçla 4 adet yeni klinik oran sisteme eklenmiştir:</p>
+                        
+                        <div class="formula-box">
+                            <strong>1. TG / HDL Oranı:</strong> Trigliserid düzeyinin HDL kolesterole oranı. Kardiyovasküler risk ve insülin direncinin en önemli göstergelerinden biridir.
+                        </div>
+                        <div class="formula-box">
+                            <strong>2. LDL / HDL Oranı:</strong> LDL kolesterolün HDL kolesterole oranı. Aterojenik indeks belirtecidir.
+                        </div>
+                        <div class="formula-box">
+                            <strong>3. AKŞ / TKŞ Oranı:</strong> Açlık kan şekerinin Tokluk kan şekeri 2. saat değerine oranı. Pankreasın insülin salgılama kapasitesini yansıtır.
+                        </div>
+                        <div class="formula-box">
+                            <strong>4. Glisemik Ortalama:</strong> (Açlık Kan Şekeri + Tokluk 1. Saat + Tokluk 2. Saat) / 3. Günlük ortalama glukoz yükünü temsil eder.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: İSTATİSTİKSEL EDA -->
+            <section id="tab-eda" class="tab-content">
+                <div class="card glass">
+                    <h3><i class="fa-solid fa-chart-pie text-cyan"></i> 3. Keşifçi Veri Analizi (Exploratory Data Analysis - EDA)</h3>
+                    <p>Temizlenen 902 hastaya ait demografik ve klinik istatistikler, dağılımlar ve parametrelerin HbA1c üzerindeki etkileri grafiklerle gösterilmiştir. Bu grafikler makalede kullanılacak temel görsel bulgulardır.</p>
+                </div>
+
+                <div class="grid-2 margin-top-2">
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-chart-column"></i> HbA1c Dağılımı ve KDE</h4>
+                        <p>Veri setimizdeki genel HbA1c dağılımı. Ortalama %5.54, medyan ise %5.50'dir. Bu da veri setimizin genel olarak sağlıklı ve prediyabetik popülasyonu kapsadığını gösterir.</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/hba1c_distribution.png') }}" alt="HbA1c Dağılımı" class="responsive-img">
+                        </div>
+                    </div>
+
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-pie-chart"></i> ADA Risk Sınıfları Oranları</h4>
+                        <p>Hastaların risk sınıfları oranları: %65.1 Normal (sağlıklı), %27.8 Prediyabet (gizli şeker) ve %7.1 Diyabet hastası bulunmaktadır.</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/hba1c_risk_classes.png') }}" alt="Risk Sınıfları" class="responsive-img">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2 margin-top-2">
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-venus-mars"></i> Cinsiyete Göre HbA1c Farkları</h4>
+                        <p>Erkek hastaların ortalama HbA1c'si (%5.67), kadın hastaların ortalamasına (%5.51) göre hafifçe daha yüksektir. Dağılım farkları kutu grafiğiyle gösterilmiştir.</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/gender_analysis_boxplot.png') }}" alt="Cinsiyet Analizi Boxplot" class="responsive-img">
+                        </div>
+                    </div>
+
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-arrow-trend-up"></i> Yaş Gruplarına Göre Risk Dağılımı</h4>
+                        <p>Yaş ilerledikçe Normal hasta oranı hızla düşerken, Prediyabet (%42.3) ve Diyabet (%11.8) oranları en yüksek seviyeye ulaşmaktadır (60+ yaş grubu).</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/age_risk_distribution.png') }}" alt="Yaş Gruplarına Göre Risk Dağılımı" class="responsive-img">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2 margin-top-2">
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-equals"></i> Cinsiyet Bazlı Ortalama Kıyaslaması</h4>
+                        <p>Kadın (707 hasta, %78.4) ve Erkek (195 hasta, %21.6) hastaların ortalama HbA1c değerleri bar grafik üzerinde karşılaştırılmıştır.</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/gender_mean_hba1c.png') }}" alt="Cinsiyet Bazlı Ortalama" class="responsive-img">
+                        </div>
+                    </div>
+
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-table-cells"></i> Özelliklerin Korelasyon Matrisi</h4>
+                        <p>HbA1c ile en güçlü pozitif korelasyon Glisemik Ortalama (r = 0.72) ve TKŞ 2. Saat (r = 0.70) parametrelerindedir. HDL kolesterol ise negatif korelasyon (r = -0.19) göstermektedir.</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/correlation_heatmap.png') }}" alt="Korelasyon Matrisi" class="responsive-img">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: METODOLOJİ & MODELLER -->
+            <section id="tab-methodology" class="tab-content">
+                <div class="card glass">
+                    <h3><i class="fa-solid fa-compass-drafting text-cyan"></i> 4. Modelleme Metodolojisi ve Test Stratejileri</h3>
+                    <p>Çalışmada sadece tek bir model eğitilmemiş; model kararlılığını doğrulamak ve en doğru akademik sonuçlara ulaşabilmek için <strong>çapraz doğrulama stratejileri</strong> ve <strong>ceza ağırlıklandırmaları</strong> test edilmiştir.</p>
+                </div>
+
+                <div class="grid-2 margin-top-2">
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-code-fork"></i> Çapraz Doğrulama (Cross-Validation) Yöntemleri</h4>
+                        <p>Modeller iki farklı veri bölme yaklaşımıyla test edilmiştir:</p>
+                        <ul>
+                            <li><strong>Tabakalı Bölme (Stratified Split):</strong> Diyabet, prediyabet ve normal sınıfların dağılım oranlarını hem eğitim hem de test kümesinde korumak için kullanılmıştır (80% Eğitim, 20% Test).</li>
+                            <li><strong>Nested 5-Fold Çapraz Doğrulama:</strong> Veri sızıntısını engellemek için dış katmanda 5-Fold ile test yapılırken, iç katmanda hiperparametre araması gerçekleştirilmiştir.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-scale-balanced"></i> Diyabetik Ceza Ağırlıklandırması (Sample Weighting)</h4>
+                        <p>Veri setinde diyabetik hastaların oranı sadece %7.1'dir. Bu dengesizlik, standart regresyon modellerinin diyabetik hastaları yanlış tahmin etmesine (hatayı ortalamaya yaklaştırmasına) neden olur. Bunu çözmek için eğitim esnasında hata kaybı (loss):
+                        <ul>
+                            <li>Diyabet hastaları için <strong>5 kat</strong>,</li>
+                            <li>Prediyabet hastaları için <strong>2 kat</strong>,</li>
+                            <li>Normal bireyler için <strong>1 kat</strong></li>
+                        </ul>
+                        ağırlıklandırılmıştır. Böylece model diyabetik hastaları doğru tahmin etmeye zorlanmıştır.</p>
+                    </div>
+                </div>
+
+                <div class="card glass margin-top-2">
+                    <h4>Eğitilen Regresyon Algoritmaları</h4>
+                    <div class="grid-3 margin-top-1">
+                        <div class="stat-box">
+                            <span class="stat-val" style="font-size:18px;">Random Forest</span>
+                            <span class="stat-lbl">Çoklu karar ağaçları topluluğu. Aşırı öğrenmeyi en çok baskılayan en stabil modelimizdir.</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" style="font-size:18px;">XGBoost</span>
+                            <span class="stat-lbl">Gradyan artırmalı ağaçlar. Çapraz doğrulamada en yüksek R² skoruna ulaşan modeldir.</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" style="font-size:18px;">AdaBoost</span>
+                            <span class="stat-lbl">Zayıf tahmincileri ağırlıklandırarak birleştiren topluluk öğrenmesi algoritması.</span>
+                        </div>
+                    </div>
+                    <div class="grid-3 margin-top-1">
+                        <div class="stat-box">
+                            <span class="stat-val" style="font-size:18px;">Yapay Sinir Ağları</span>
+                            <span class="stat-lbl">L2 düzenlileştirmesi eklenerek stabilize edilen yapay sinir hücresi modeli.</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" style="font-size:18px;">Karar Ağaçları</span>
+                            <span class="stat-lbl">Doğrusal olmayan sınırları öğrenen tekil regresyon ağacı modeli.</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" style="font-size:18px;">Lineer / Ridge Regresyon</span>
+                            <span class="stat-lbl">Özellikler arası doğrusal ilişkileri test eden temel referans modeli.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: DENEY SONUÇLARI -->
+            <section id="tab-results-master" class="tab-content">
+                <div class="card glass">
+                    <h3><i class="fa-solid fa-flask text-cyan"></i> 5. Karşılaştırmalı Deney Sonuçları ve Akademik Tartışma</h3>
+                    <p>Tez çalışmamız kapsamında veri setinin iki farklı hali (Temel ve Gelişmiş), iki farklı bölme yöntemi ve ağırlıklandırma senaryoları altında koşturulan tüm makine öğrenmesi modellerinin R² ve overfitting durumları özetlenmiştir.</p>
+                </div>
+
+                <!-- Unweighted K-Fold & Stratified Results -->
+                <div class="grid-2 margin-top-2">
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-list-check"></i> Hiperparametre Ayarlı 5-Fold CV Sonuçları</h4>
+                        <p>GridSearch ve K-Fold ile elde edilen en iyi modelimiz <strong>XGBoost</strong> olmuştur (Val R²: 0.5498, Overfitting Gap: %20.0).</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/ml_train_test_comparison.png') }}" alt="K-Fold Kıyaslama" class="responsive-img">
+                        </div>
+                    </div>
+
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-arrow-trend-up"></i> En İyi Modelin Saçılım (Scatter) Grafiği</h4>
+                        <p>Tahmin edilen değerler ile gerçek değerlerin uyumu. Noktalar referans çizgisine ne kadar yakınsa hata o kadar düşüktür.</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/ml_best_model_predictions.png') }}" alt="Best Model Scatter" class="responsive-img">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2 margin-top-2">
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-brain"></i> Yapay Zeka Özellik Önem Sıralaması (Feature Importance)</h4>
+                        <p>Random Forest modeline göre en önemli özellik %44.6 etki oranıyla <strong>Glisemik Ortalama</strong> olmuştur. Onu %15.8 ile <strong>Trigliserid / HDL oranı</strong> ve %11.2 ile <strong>Yaş</strong> takip etmektedir. Bu durum özellik mühendisliğimizin klinik başarısını doğrulamaktadır.</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/ml_best_model_feature_importance.png') }}" alt="Feature Importance" class="responsive-img">
+                        </div>
+                    </div>
+
+                    <div class="card glass">
+                        <h4><i class="fa-solid fa-balance-scale"></i> Ağırlıklı Eğitim Train-Test Kıyaslaması</h4>
+                        <p>Örnek ağırlıklandırma (Weighted) senaryosunda modellerin Train ve Test R² skorlarının karşılaştırılması.</p>
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/ml_weighted_train_test_comparison.png') }}" alt="Weighted R2 Comparison" class="responsive-img">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SHAP Explainable AI Card -->
+                <div class="card glass margin-top-2">
+                    <h4><i class="fa-solid fa-wand-magic-sparkles"></i> SHAP Özellik Etki Analizi (Explainable AI - XAI)</h4>
+                    <p>SHAP (SHapley Additive exPlanations) beeswarm grafiği, modelin her bir hasta için yaptığı tahminde hangi özelliğin HbA1c öngörüsünü yukarı (sağa - kırmızı) veya aşağı (sola - mavi) çektiğini gösterir. Bu analiz kara kutu (black-box) modelleri şeffaf hale getirir.</p>
+                    <div class="grid-2 margin-top-1">
+                        <div class="chart-wrapper">
+                            <img src="{{ url_for('static', filename='imgs/shap_summary.png') }}" alt="SHAP Analizi Beeswarm Grafiği" class="responsive-img">
+                        </div>
+                        <div class="clinical-description" style="border-left-color: var(--cyan); margin-bottom: 0; padding: 1.5rem;">
+                            <h5><i class="fa-solid fa-stethoscope"></i> Klinik SHAP Yorumları:</h5>
+                            <p><strong>1. Glisemik Ortalama (Glikoz Birikimi):</strong> En üst sırada yer alan ve model kararlarını en çok etkileyen glisemik ortalamanın yüksek değerleri (kırmızı noktalar), tahmini HbA1c düzeyini çok güçlü şekilde pozitif yönde (sağa doğru) artırmaktadır. Bu durum biyolojik kurallarla mükemmel uyumludur.</p>
+                            <p class="margin-top-1"><strong>2. TG / HDL Oranı (İnsülin Direnci):</strong> Trigliserid / HDL oranının yüksek olması (kırmızı noktalar) SHAP etkisini pozitif yönde artırırken, düşük olması (mavi noktalar) azaltmaktadır. İnsülin direncinin biyokimyasal olarak HbA1c'yi yükselttiği doğrulanmaktadır.</p>
+                            <p class="margin-top-1"><strong>3. HDL Kolesterol (Koruyucu Etki):</strong> HDL kolesterolün yüksek değerleri (kırmızı noktalar) SHAP etkisinde sola doğru (negatif yönde) bir yığılma oluşturmaktadır. Yani yüksek HDL, tahmini HbA1c değerini baskılayarak düşürmektedir. Bu da literatürdeki koruyucu lipid rasyonalitesiyle birebir örtüşür.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- master comparison table -->
+                <div class="card glass margin-top-2">
+                    <h4>🏆 Akademik Master Sonuç Tablosu (12 Senaryo)</h4>
+                    <div class="table-container margin-top-1">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Senaryo</th>
+                                    <th>Veri Kümesi</th>
+                                    <th>Bölme Yöntemi</th>
+                                    <th>Hiperparametre / Ağırlık</th>
+                                    <th>En Başarılı Algoritma</th>
+                                    <th>Eğitim R² (Train)</th>
+                                    <th>Test/Val R²</th>
+                                    <th>Fark (Overfitting)</th>
+                                    <th>Klinik / Akademik Rasyonalite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="best-row">
+                                    <td>Senaryo 1</td>
+                                    <td>Temel Veri</td>
+                                    <td>Nested K-Fold</td>
+                                    <td>Varsayılan (Default)</td>
+                                    <td>XGBoost</td>
+                                    <td>0.8686</td>
+                                    <td>0.5339</td>
+                                    <td>0.3347</td>
+                                    <td>Yüksek ezberleme (overfitting) mevcuttur.</td>
+                                </tr>
+                                <tr>
+                                    <td>Senaryo 2</td>
+                                    <td>Gelişmiş Veri</td>
+                                    <td>Nested K-Fold</td>
+                                    <td>Varsayılan (Default)</td>
+                                    <td>AdaBoost</td>
+                                    <td>0.7807</td>
+                                    <td>0.5332</td>
+                                    <td>0.2476</td>
+                                    <td>Klinik oranların eklenmesi kararlılığı artırdı.</td>
+                                </tr>
+                                <tr class="best-row">
+                                    <td>Senaryo 3</td>
+                                    <td>Temel Veri</td>
+                                    <td>Nested K-Fold</td>
+                                    <td>Hiperparametre Ayarlı (Tuned)</td>
+                                    <td>XGBoost</td>
+                                    <td>0.7343</td>
+                                    <td>0.5493</td>
+                                    <td>0.1849</td>
+                                    <td>GridSearch düzenlileştirmesi ezberi yarıya indirdi.</td>
+                                </tr>
+                                <tr class="best-highlight">
+                                    <td>Senaryo 4</td>
+                                    <td>Gelişmiş Veri</td>
+                                    <td>Nested K-Fold</td>
+                                    <td>Hiperparametre Ayarlı (Tuned)</td>
+                                    <td>XGBoost</td>
+                                    <td>0.7502</td>
+                                    <td>0.5498</td>
+                                    <td>0.2004</td>
+                                    <td><strong>Çapraz doğrulamada elde edilen en yüksek kararlı R² skoru.</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Senaryo 5</td>
+                                    <td>Temel Veri</td>
+                                    <td>Tabakalı Split</td>
+                                    <td>Varsayılan (Default)</td>
+                                    <td>AdaBoost</td>
+                                    <td>0.7351</td>
+                                    <td>0.5149</td>
+                                    <td>0.2201</td>
+                                    <td>Düşük hiperparametre stabilitesi gözlemlendi.</td>
+                                </tr>
+                                <tr>
+                                    <td>Senaryo 6</td>
+                                    <td>Gelişmiş Veri</td>
+                                    <td>Tabakalı Split</td>
+                                    <td>Varsayılan (Default)</td>
+                                    <td>Yapay Sinir Ağları</td>
+                                    <td>0.7654</td>
+                                    <td>0.5457</td>
+                                    <td>0.2196</td>
+                                    <td>YSA öznitelik mühendisliğinden yüksek oranda faydalandı.</td>
+                                </tr>
+                                <tr class="best-row">
+                                    <td>Senaryo 7</td>
+                                    <td>Temel Veri</td>
+                                    <td>Tabakalı Split</td>
+                                    <td>Hiperparametre Ayarlı (Tuned)</td>
+                                    <td>XGBoost</td>
+                                    <td>0.7710</td>
+                                    <td>0.5747</td>
+                                    <td>0.1962</td>
+                                    <td>Tekil test setinde en yüksek skora ulaşan model.</td>
+                                </tr>
+                                <tr class="best-highlight-green">
+                                    <td>Senaryo 8</td>
+                                    <td>Gelişmiş Veri</td>
+                                    <td>Tabakalı Split</td>
+                                    <td>Hiperparametre Ayarlı (Tuned)</td>
+                                    <td>Random Forest</td>
+                                    <td>0.6581</td>
+                                    <td><strong>0.5635</strong></td>
+                                    <td><strong>0.0946</strong></td>
+                                    <td><strong>Ezberlemesi %9.4 olan, akademik açıdan en stabil / kararlı model.</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Senaryo 9</td>
+                                    <td>Temel Veri</td>
+                                    <td>Tabakalı Split</td>
+                                    <td>Ağırlıklı + Tuned</td>
+                                    <td>Yapay Sinir Ağları</td>
+                                    <td>0.6346</td>
+                                    <td>0.5431</td>
+                                    <td>0.0915</td>
+                                    <td>YSA modelinin en dengeli çalışan ağırlıklı hali.</td>
+                                </tr>
+                                <tr class="best-highlight-green">
+                                    <td>Senaryo 10</td>
+                                    <td>Gelişmiş Veri</td>
+                                    <td>Tabakalı Split</td>
+                                    <td>Ağırlıklı + Tuned</td>
+                                    <td>Yapay Sinir Ağları</td>
+                                    <td>0.6488</td>
+                                    <td>0.5539</td>
+                                    <td>0.0949</td>
+                                    <td><strong>Random Forest ise R²: 0.5413 ile Diyabetik MAE hatasını 0.49'a düşürdü.</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Senaryo 11</td>
+                                    <td>Temel Veri</td>
+                                    <td>Nested K-Fold</td>
+                                    <td>Ağırlıklı + Tuned</td>
+                                    <td>XGBoost</td>
+                                    <td>0.7769</td>
+                                    <td>0.5256</td>
+                                    <td>0.2512</td>
+                                    <td>K-Fold çapraz doğrulamada en iyi ağırlıklı baz model.</td>
+                                </tr>
+                                <tr>
+                                    <td>Senaryo 12</td>
+                                    <td>Gelişmiş Veri</td>
+                                    <td>Nested K-Fold</td>
+                                    <td>Ağırlıklı + Tuned</td>
+                                    <td>AdaBoost</td>
+                                    <td>0.7736</td>
+                                    <td>0.5370</td>
+                                    <td>0.2366</td>
+                                    <td>Gelişmiş öznitelikler ağırlıklı K-Fold başarısını artırdı.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="clinical-description margin-top-2">
+                        <h5><i class="fa-solid fa-comments"></i> Klinik ve Akademik Tartışma Bulguları</h5>
+                        <p><strong>1. Öznitelik Mühendisliğinin Başarısı:</strong> Model eğitimi esnasında ham veriler yerine TG/HDL, LDL/HDL oranları gibi klinik indekslerin sisteme verilmesi modellerin ezberleme oranını (Train-Test gap) belirgin şekilde düşürmüştür (Örn: Random Forest overfitting farkı %42.8'den %9.4'e inmiştir).</p>
+                        <p class="margin-top-1"><strong>2. Diyabetik Ağırlıklandırmanın Önemi (Klinik Takas):</strong> Diyabetik hastalara 5 kat ceza ağırlığı verildiğinde modellerin genel test R² başarısı çok hafif gerilese de, diyabet hastalarındaki tahmin hata payı (MAE) <strong>%12'den fazla düşerek 0.4913 HbA1c</strong> düzeyine gerilemiştir. Tıbbi teşhiste yalancı negatifliği engellemek adına genel başarımdan hafifçe ödün verip risk grubundaki hatayı minimize etmek klinik olarak arzulanan yaklaşımdır.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: CANLI KARAR DESTEK -->
+            <section id="tab-predict" class="tab-content">
+                <div class="grid-predict">
+                    <!-- Predictor Form Card -->
+                    <div class="card glass card-form">
+                        <h3><i class="fa-solid fa-notes-medical text-cyan"></i> Klinik Karar Destek Hesaplayıcı Formu</h3>
+                        <p class="form-desc">Aşağıdaki 9 klinik biyokimyasal ve demografik girdiyi doldurarak hastanın HbA1c değerini ve risk sınıfını live tahmin motorumuzla (Random Forest) hesaplayın.</p>
+                        
+                        <form id="hba1c-form" class="medical-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="yas"><i class="fa-solid fa-user-clock"></i> Yaş</label>
+                                    <input type="number" id="yas" name="yas" min="1" max="120" placeholder="Örn: 45" required>
+                                    <span class="field-error"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cinsiyet"><i class="fa-solid fa-venus-mars"></i> Cinsiyet</label>
+                                    <select id="cinsiyet" name="cinsiyet" required>
+                                        <option value="" disabled selected>Seçiniz</option>
+                                        <option value="E">Erkek (E / e)</option>
+                                        <option value="K">Kadın (K / k)</option>
+                                    </select>
+                                    <span class="field-error"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-section-title">Glukoz Profili (Kan Şekeri Ölçümleri)</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="aks"><i class="fa-solid fa-droplet"></i> Açlık Kan Şekeri (AKŞ) <small>(mg/dL)</small></label>
+                                    <input type="number" step="0.1" id="aks" name="aks" min="30" max="600" placeholder="Örn: 105" required>
+                                    <span class="field-error"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tks_1"><i class="fa-solid fa-droplet text-red-soft"></i> Tokluk Şekeri 1. Saat <small>(mg/dL)</small></label>
+                                    <input type="number" step="0.1" id="tks_1" name="tks_1" min="30" max="600" placeholder="Örn: 145" required>
+                                    <span class="field-error"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tks_2"><i class="fa-solid fa-droplet text-red-soft"></i> Tokluk Şekeri 2. Saat <small>(mg/dL)</small></label>
+                                    <input type="number" step="0.1" id="tks_2" name="tks_2" min="30" max="600" placeholder="Örn: 125" required>
+                                    <span class="field-error"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-section-title">Lipid Profili (Kan Yağları)</div>
+                            <div class="form-row">
+                                <div class="form-group col-3">
+                                    <label for="kolesterol">Total Kolesterol <small>(mg/dL)</small></label>
+                                    <input type="number" step="0.1" id="kolesterol" name="kolesterol" min="50" max="600" placeholder="Örn: 190" required>
+                                    <span class="field-error"></span>
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="hdl">HDL Kolesterol <small>(mg/dL)</small></label>
+                                    <input type="number" step="0.1" id="hdl" name="hdl" min="10" max="150" placeholder="Örn: 45" required>
+                                    <span class="field-error"></span>
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="ldl">LDL Kolesterol <small>(mg/dL)</small></label>
+                                    <input type="number" step="0.1" id="ldl" name="ldl" min="20" max="400" placeholder="Örn: 115" required>
+                                    <span class="field-error"></span>
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="tg">Trigliserid <small>(mg/dL)</small></label>
+                                    <input type="number" step="0.1" id="tg" name="tg" min="30" max="1000" placeholder="Örn: 150" required>
+                                    <span class="field-error"></span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit">
+                                <i class="fa-solid fa-flask-vial"></i> HbA1c Değerini Tahmin Et
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Predictor Result Card -->
+                    <div class="card glass card-result" id="result-card">
+                        <div class="result-placeholder">
+                            <i class="fa-solid fa-laptop-medical result-icon-placeholder"></i>
+                            <h4>Tahmin Sonucu Bekleniyor</h4>
+                            <p>Klinik parametreleri girip "HbA1c Değerini Tahmin Et" butonuna bastığınızda, Random Forest yapay zeka modelimiz canlı tahmini ve risk analizini buraya yansıtacaktır.</p>
+                        </div>
+                        
+                        <div class="result-display hidden">
+                            <h3><i class="fa-solid fa-receipt"></i> Analiz Sonuç Raporu</h3>
+                            
+                            <div class="hba1c-badge-container">
+                                <span class="hba1c-title">Tahmini HbA1c Oranı</span>
+                                <div class="hba1c-circle" id="result-circle">
+                                    <span id="result-val">5.8</span>
+                                    <small>%</small>
+                                </div>
+                            </div>
+
+                            <div class="risk-indicator">
+                                <span>Risk Durumu:</span>
+                                <strong id="risk-status">Prediyabet</strong>
+                            </div>
+
+                            <div class="clinical-description">
+                                <h5><i class="fa-solid fa-stethoscope"></i> Klinik Yorum ve Tavsiye</h5>
+                                <p id="risk-desc">Tip 2 diyabet geliştirme riskiniz yüksektir. Yaşam tarzınızı optimize etmeniz önerilir.</p>
+                            </div>
+                            
+                            <!-- Internally Computed Features Grid -->
+                            <div class="computed-features">
+                                <h5><i class="fa-solid fa-microscope"></i> Sistem Tarafından Hesaplanan İndeksler</h5>
+                                <div class="computed-grid">
+                                    <div class="comp-box">
+                                        <small>TG/HDL Oranı</small>
+                                        <strong id="comp-tg-hdl">3.33</strong>
+                                    </div>
+                                    <div class="comp-box">
+                                        <small>LDL/HDL Oranı</small>
+                                        <strong id="comp-ldl-hdl">2.55</strong>
+                                    </div>
+                                    <div class="comp-box">
+                                        <small>AKS/TKŞ Oranı</small>
+                                        <strong id="comp-aks-tks">0.84</strong>
+                                    </div>
+                                    <div class="comp-box">
+                                        <small>Glisemik Ortalama</small>
+                                        <strong id="comp-glisemik">125.0</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+    "mlp__alpha": 5.0,
+    "mlp__hidden_layer_sizes": [
+        32
+    ],
+    "mlp__learning_rate_init": 0.005
+}
